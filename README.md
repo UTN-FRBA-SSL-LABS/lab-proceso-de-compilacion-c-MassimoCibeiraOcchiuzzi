@@ -479,13 +479,14 @@ gcc -E programa.c | grep "Iniciando"
 gcc -E -DDEBUG programa.c | grep "Iniciando"
 ```
 
-> **R:**
+> **R:** Nada
+> , printf("[DEBUG] %s\n", ("Iniciando main"));
 
 ¿Agregar `-DDEBUG` hace que aparezca código nuevo en el `.i` que antes no estaba?
 Respondé SI o NO:
 
 <!-- Completá con SI o NO: -->
-DEBUG_ACTIVA_CODIGO=
+DEBUG_ACTIVA_CODIGO= Si
 
 ---
 
@@ -508,7 +509,7 @@ grep -n "stdio.h" programa.i | head -5
 
 ¿Qué información comunican esas líneas `# N "archivo"`? ¿De qué archivo proviene el bloque que contiene la declaración de `printf`?
 
-> **R:**
+> **R:** Estas lineas son marcadores que indican el nombre del archivo original y el numero de linea. Sirven para que el compilador reporte errores con la ubicación exacta del código fuente. La declaracion de printf proviene del archivo stdio.h
 
 ---
 
@@ -664,26 +665,32 @@ Aparecen como instrucciones de llamada (por ejemplo `bl _area_circulo`), pero **
 
 **P7.** Ejecutá `grep "area_circulo" programa.s` y copiá la salida.
 
-> **R:**
+> **R:** .ascii "area_circulo(%.1f) = %.4f\12\0"
+        call    area_circulo
+        .def    area_circulo;   .scl    2;      .type   32;     .endef
 
 ¿`area_circulo` aparece como una función *definida* en `programa.s`
 (con su propio bloque de instrucciones) o solo como una *llamada* (instrucción sin cuerpo)?
 Respondé DEFINIDA o LLAMADA:
 
 <!-- Completá con DEFINIDA o LLAMADA: -->
-AREA_EN_S=
+AREA_EN_S= LLAMADA
 
 ---
 
 **P8.** Encontrá en `programa.s` la etiqueta `sumar:` o `_sumar:` y copiá
 las primeras 4 líneas de instrucciones que le siguen.
 
-> **R:**
+> **R:** sumar:
+	pushq	%rbp
+	.seh_pushreg	%rbp
+	movq	%rsp, %rbp
+	.seh_setframe	%rbp, 0
 
 Explicá en términos generales qué hacen esas instrucciones
 (usá los comentarios del laboratorio como guía):
 
-> **R:**
+> **R:** Primero se encarga de preparar la memoria para la funcion, guarda el estado de la funcion que la llamo y configuran un nuevo espacio de trabajo para que SUMAR pued trabajar con sus parametros y variables
 
 ---
 
@@ -696,13 +703,17 @@ grep "llamadas" programa.s
 
 **P9.** Ejecutá `grep "llamadas" programa.s` y copiá la salida.
 
-> **R:**
+> **R:**         .globl  llamadas
+llamadas:
+        movl    llamadas(%rip), %eax
+        movl    %eax, llamadas(%rip)
+        movl    llamadas(%rip), %eax
 
 ¿Aparece la variable `llamadas` en el ensamblador?
 Respondé SI o NO:
 
 <!-- Completá con SI o NO: -->
-LLAMADAS_EN_S=
+LLAMADAS_EN_S= SI 
 
 ---
 
@@ -806,13 +817,29 @@ Salida esperada (simplificada):
 
 **P10.** Ejecutá `nm programa.o` y copiá la salida completa.
 
-> **R:**
+> **R:** 0000000000000000 b .bss
+0000000000000000 d .data
+0000000000000000 p .pdata
+0000000000000000 r .rdata
+0000000000000000 r .rdata$zzz
+0000000000000000 t .text
+0000000000000000 r .xdata
+                 U __imp___acrt_iob_func
+                 U __main
+                 U __mingw_vfprintf
+                 U area_circulo
+                 U factorial
+0000000000000195 T imprimir_separador
+0000000000000000 B llamadas
+0000000000000074 T main
+0000000000000000 t printf
+0000000000000051 T sumar
 
 ¿Con qué letra aparece `area_circulo` en esa tabla?
 Escribí solo la letra (una mayúscula):
 
 <!-- Completá con la letra exacta que muestra nm (U, T, D, etc.): -->
-TIPO_AREA_EN_O=
+TIPO_AREA_EN_O= U
 
 ---
 
@@ -832,13 +859,13 @@ nm matematica.o
 **P11.** ¿Por qué `area_circulo` tiene ese tipo en `programa.o`
 pero tipo `T` en `matematica.o`?
 
-> **R:**
+> **R:** Porque en programa.o no esta definida y en matematica.o es donde se define
 
 ¿Qué etapa del proceso de compilación resuelve esa diferencia?
 Respondé con una palabra: PREPROCESAMIENTO, COMPILACION, ENSAMBLADO o ENLAZADO:
 
 <!-- Completá con una de las cuatro opciones: -->
-ETAPA_QUE_RESUELVE=
+ETAPA_QUE_RESUELVE= ENLAZADO
 
 ---
 
@@ -857,13 +884,13 @@ Un `.o` no es ejecutable por dos razones:
 
 **P12.** Intentá ejecutar `./programa.o` directamente. ¿Qué mensaje aparece?
 
-> **R:**
+> **R:** bash: ./programa.o: cannot execute binary file: Exec format error
 
 ¿Se puede ejecutar un archivo `.o` directamente?
 Respondé SI o NO:
 
 <!-- Completá con SI o NO: -->
-EJECUTABLE_O=
+EJECUTABLE_O= NO
 
 ---
 
@@ -952,13 +979,14 @@ nm programa | grep area_circulo
 **P13.** Enlazá con `gcc programa.o matematica.o -o programa`.
 Ejecutá `nm programa | grep "area_circulo"` y copiá la salida.
 
-> **R:**
+> **R:** 00000001400016f0 T area_circulo
+
 
 ¿Con qué letra aparece ahora `area_circulo` en el ejecutable final?
 Escribí solo la letra:
 
 <!-- Completá con la letra exacta que muestra nm: -->
-TIPO_AREA_ENLAZADO=
+TIPO_AREA_ENLAZADO= T
 
 ---
 
@@ -974,17 +1002,17 @@ Quedan algunos `U` incluso en el ejecutable final. ¿Por qué? Son funciones de 
 
 **P14.** Ejecutá `nm programa | grep "^ *U"` y copiá la salida.
 
-> **R:**
+> **R:**                  U __end__
 
 ¿Quedan símbolos de tipo `U` en el ejecutable final?
-Respondé SI o NO:
+Respondé SI o NO: 
 
 <!-- Completá con SI o NO: -->
-SIMBOLOS_U_FINAL=
+SIMBOLOS_U_FINAL= SI
 
 ¿Por qué quedan? ¿Quién los resuelve y cuándo?
 
-> **R:**
+> **R:** Quedan símbolos U porque el ejecutable utiliza enlazado dinámico para las funciones de la biblioteca estándar del sistema (como printf de libc).
 
 ---
 
@@ -998,12 +1026,23 @@ SIMBOLOS_U_FINAL=
 
 **P15.** Ejecutá `./programa` y copiá la salida completa.
 
-> **R:**
+> **R:** sumar(3, 4)       = 7
+CUADRADO(5)      = 25
+MAX(7, 12)        = 12
+area_circulo(5.0) = 78.5398
+Factoriales:
+  0! = 1
+  1! = 1
+  2! = 2
+  3! = 6
+  4! = 24
+  5! = 120
+Llamadas a sumar(): 1
 
 ¿Qué valor da `factorial(5)`? Escribí solo el número:
 
 <!-- Completá con el número exacto: -->
-FACTORIAL_5=
+FACTORIAL_5= 120
 
 ---
 
@@ -1015,21 +1054,26 @@ FACTORIAL_5=
 como `CUADRADO(x)` y una **función real** como `sumar(a, b)`.
 ¿En qué etapa "desaparece" cada una? ¿Cuál tiene verificación de tipos?
 
-> **R:**
+> **R:** La diferencia principal es que una macro función es un simple reemplazo de texto literal, mientras que una función real es un bloque de instrucciones estructurado en memoria al que el programa llama.
+La macro desaparece en la etapa de preprocesamiento, mientras que la función real deja de ser codigo C en la etapa de compilacion al pasar a lenguaje ensamblador.
+Finalmente, solo la función real tiene verificación de tipos, ya que la macro solo reemplaza texto a ciegas sin importarle si le pasas un numero o un texto.
 
 ---
 
 **P17.** ¿Qué diferencia hay entre un símbolo de tipo `T` y uno de tipo `D`
 en la salida de `nm`? ¿En qué sección del archivo objeto vive cada uno?
 
-> **R:**
+> **R:** Un símbolo de tipo T representa código ejecutable (las funciones del programa) y vive en la sección .text del archivo objeto. Por otro lado, un símbolo de tipo D representa variables globales que ya tienen un valor inicial asignado, y vive en la sección .data
 
 ---
 
 **P18.** (Bonus) Ejecutá `otool -L programa` (macOS) o `ldd programa` (Linux)
 y copiá la salida.
 
-> **R:**
+> **R:** ntdll.dll => /c/Windows/SYSTEM32/ntdll.dll (0x7ff8354f0000)
+        KERNEL32.DLL => /c/Windows/System32/KERNEL32.DLL (0x7ff8353e0000)
+        KERNELBASE.dll => /c/Windows/System32/KERNELBASE.dll (0x7ff832bf0000)
+        msvcrt.dll => /c/Windows/System32/msvcrt.dll (0x7ff833590000)
 
 ¿Por qué `libc` no hubo que especificarla explícitamente al enlazar con `gcc`?
 
