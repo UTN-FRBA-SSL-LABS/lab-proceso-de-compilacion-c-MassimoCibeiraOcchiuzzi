@@ -422,24 +422,28 @@ Nótese que `CUADRADO(5)` se expande a `((5) * (5))`, con los paréntesis extra 
 
 **P3.** Ejecutá `grep -n "CUADRADO" programa.i` y copiá la salida completa.
 
-> **R:**
+> **R:** 693:# 1130 "C:/TDM-GCC-64/x86_64-w64-mingw32/include/stdio.h" 3
+740:# 1401 "C:/TDM-GCC-64/x86_64-w64-mingw32/include/stdio.h" 3
+767:# 1407 "C:/TDM-GCC-64/x86_64-w64-mingw32/include/stdio.h" 2 3
+1713:    printf("=== Laboratorio de Compilacion en C (v%s) ===\n\n", "1.0");
+1722:    printf("CUADRADO(%d)      = %d\n", 5, ((5) * (5)));
 
 ¿El nombre `CUADRADO` aparece tal cual en `programa.i`, o fue reemplazado
 por otra cosa? Respondé SI o NO:
 
 <!-- Completá con SI o NO: -->
-CUADRADO_EN_I=
+CUADRADO_EN_I= Si
 
 ---
 
 **P4.** Ejecutá `grep -n '"1\.0"' programa.i` y copiá la línea encontrada.
 
-> **R:**
+> **R:** 1713:    printf("=== Laboratorio de Compilacion en C (v%s) ===\n\n", "1.0");
 
 ¿Cuál era el nombre de la macro en `programa.c` que fue reemplazada por `"1.0"`?
 
 <!-- Completá con el nombre exacto de la macro (en mayúsculas, como está en el fuente): -->
-NOMBRE_MACRO_VERSION=
+NOMBRE_MACRO_VERSION= VERSION
 
 ---
 
