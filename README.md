@@ -346,11 +346,11 @@ Todos son correctos. Lo importante no es el número exacto sino que sea **varios
 **P1.** Ejecutá `wc -l programa.i` y escribí el número de líneas que obtenés.
 
 <!-- Completá la línea siguiente con el número exacto (solo dígitos, sin espacios): -->
-LINEAS_I=
+LINEAS_I= 1753
 
 ¿Por qué ese número es tan mayor que las 94 líneas de `programa.c`?
 
-> **R:**
+> **R:** Porque el preprocesador lee la directiva #include y copia/pega todo el contenido de los archivos de cabecera del sistema como stdio.h directamente adentro de mi código.
 
 ---
 
@@ -389,11 +389,11 @@ grep "Archivo fuente principal" programa.i   # no debe encontrar nada
 ¿El comando encuentra algo o no devuelve nada?
 
 <!-- Completá con SI (si encontró algo) o NO (si no encontró nada): -->
-COMENTARIOS_EN_I=
+COMENTARIOS_EN_I= No
 
 ¿Por qué ocurre eso?
 
-> **R:**
+> **R:** Porque el mensaje que estamos buscando esta escrito en un comentario y los comentario en el proceso de preprocesamientos los elimina
 
 ---
 
